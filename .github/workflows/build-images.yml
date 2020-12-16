@@ -35,8 +35,8 @@ jobs:
           - latest
 
         include:
-          php: latest
-          image: cli
+          - php: latest
+            image: cli
 
     steps:
       - name: Checkout repository
