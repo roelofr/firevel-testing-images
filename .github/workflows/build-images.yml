@@ -57,7 +57,7 @@ jobs:
         id: determine-name
         run: |
           sed -i "s/FROM php:cli/FROM php:${IMAGE_VERSION:-${PHP_VERSION}-cli}/" Dockerfile
-          echo "::set-output name=image-name::docker.pkg.github.com/${GITHUB_REPOSITORY}/php:${PHP_VERSION}"
+          echo "::set-output name=image-name::docker.pkg.github.com/${GITHUB_REPOSITORY}/firevel-php:${PHP_VERSION}"
         env:
           PHP_VERSION: ${{ matrix.php }}
           IMAGE_VERSION: ${{ matrix.image }}
