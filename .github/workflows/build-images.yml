@@ -1,7 +1,18 @@
 name: "Build Docker images"
 
 on:
+  # Or a push
+  push:
+    branches:
+      - main
+
+  # Pull requests
+  pull_request:
+
+  # Or a manual built issue
   workflow_dispatch:
+
+  # Or a schedule
   schedule:
     # 1 Minute [0,59]
     # 2 Hour [0,23]
@@ -60,6 +71,7 @@ jobs:
           DOCKER_IMAGE: ${{ steps.determine-name.outputs.image-name }}
 
       - name: Upload images
+        if:  ${{ github.event_name != 'pull_request' }}
         run: docker push ${DOCKER_IMAGE}
         env:
           DOCKER_IMAGE: ${{ steps.determine-name.outputs.image-name }}
