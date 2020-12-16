@@ -1,13 +1,17 @@
-name: "Build Docker images"
+name: "Build debian Docker images"
 
 on:
   # Or a push
   push:
+    paths:
+      - Dockerfile
     branches:
       - main
 
   # Pull requests
   pull_request:
+    paths:
+      - Dockerfile
 
   # Or a manual built issue
   workflow_dispatch:
@@ -23,7 +27,7 @@ on:
 
 jobs:
   docker-build:
-    name: Build Docker image for PHP ${{ matrix.php }}
+    name: Build regular Docker image for PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -58,19 +62,19 @@ jobs:
           PHP_VERSION: ${{ matrix.php }}
           IMAGE_VERSION: ${{ matrix.image }}
 
-      - name: Pull images
+      - name: Pull image
         run: docker pull ${DOCKER_IMAGE}
         continue-on-error: true
         env:
           DOCKER_IMAGE: ${{ steps.determine-name.outputs.image-name }}
 
-      - name: Build images
+      - name: Build image
         timeout-minutes: 30
         run: docker build -t ${DOCKER_IMAGE} .
         env:
           DOCKER_IMAGE: ${{ steps.determine-name.outputs.image-name }}
 
-      - name: Upload images
+      - name: Upload image
         if:  ${{ github.event_name != 'pull_request' }}
         run: docker push ${DOCKER_IMAGE}
         env:
