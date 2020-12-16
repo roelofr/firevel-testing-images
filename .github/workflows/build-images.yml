@@ -46,19 +46,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Login to GitHub Packages Docker Registry
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
-          registry: docker.pkg.github.com
+          registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.PACKAGES_SECRET }}
 
       - name: Determine build
         id: determine-name
         run: |
           sed -i "s/FROM php:cli/FROM php:${IMAGE_VERSION:-${PHP_VERSION}-cli}/" Dockerfile
-          echo "::set-output name=image-name::docker.pkg.github.com/${GITHUB_REPOSITORY}/firevel-php:${PHP_VERSION}"
+          echo "::set-output name=image-name::ghcr.io/${REPO_OWNER}/php-grpc:${PHP_VERSION}"
         env:
+          REPO_OWNER: ${{ github.repository_owner }}
           PHP_VERSION: ${{ matrix.php }}
           IMAGE_VERSION: ${{ matrix.image }}
 
