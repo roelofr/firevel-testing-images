@@ -50,7 +50,7 @@ For example, to run simple unit tests in your project, you can use the following
 jobs:
   my_job:
     container:
-      image: docker.pkg.github.com/roelofr/firevel-testing-images/firevel-php
+      image: ghcr.io/roelofr/php-grpc:latest
 
     steps:
       - name: Checkout repository
