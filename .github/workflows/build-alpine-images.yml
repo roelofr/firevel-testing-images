@@ -75,7 +75,7 @@ jobs:
 
       - name: Build image
         timeout-minutes: 30
-        run: docker build -t ${DOCKER_IMAGE} .
+        run: docker build -t ${DOCKER_IMAGE} -f alpine.Dockerfile .
         env:
           DOCKER_IMAGE: ${{ steps.determine-name.outputs.image-name }}
 
