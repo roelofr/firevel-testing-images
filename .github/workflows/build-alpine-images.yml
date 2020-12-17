@@ -1,0 +1,86 @@
+name: "Build Alpine Docker images"
+
+on:
+  # Or a push
+  push:
+    paths:
+      - alpine.Dockerfile
+      - .github/workflows/build-alpine-images.yml
+    branches:
+      - main
+
+  # Pull requests
+  pull_request:
+    paths:
+      - alpine.Dockerfile
+      - .github/workflows/build-alpine-images.yml
+
+  # Or a manual built issue
+  workflow_dispatch:
+
+  # Or a schedule
+  schedule:
+    # 1 Minute [0,59]
+    # 2 Hour [0,23]
+    # 3 Day of the month [1,31]
+    # 4 Month of the year [1,12]
+    # 5 Day of the week ([0,6] with 0=Sunday)
+    - cron:  '42 6 * * 6'
+
+jobs:
+  docker-build:
+    name: Build alpine Docker image for PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - '7.3'
+          - '7.4'
+          - '8.0'
+          - latest
+
+        include:
+          - php: latest
+            image: cli-alpine
+            tag: alpine
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.PACKAGES_SECRET }}
+
+      - name: Determine build
+        id: determine-name
+        run: |
+          sed -i "s/FROM php:cli-alpine/FROM php:${IMAGE_VERSION:-${PHP_VERSION}-cli-alpine}/" Dockerfile
+          echo "::set-output name=image-name::ghcr.io/${REPO_OWNER}/php-grpc:${TAG_VERSION:-${PHP_VERSION}-alpine}"
+        env:
+          REPO_OWNER: ${{ github.repository_owner }}
+          PHP_VERSION: ${{ matrix.php }}
+          IMAGE_VERSION: ${{ matrix.image }}
+          TAG_VERSION: ${{ matrix.tag }}
+
+      - name: Pull image
+        run: docker pull ${DOCKER_IMAGE}
+        continue-on-error: true
+        env:
+          DOCKER_IMAGE: ${{ steps.determine-name.outputs.image-name }}
+
+      - name: Build image
+        timeout-minutes: 30
+        run: docker build -t ${DOCKER_IMAGE} .
+        env:
+          DOCKER_IMAGE: ${{ steps.determine-name.outputs.image-name }}
+
+      - name: Upload image
+        if:  ${{ github.event_name != 'pull_request' }}
+        run: docker push ${DOCKER_IMAGE}
+        env:
+          DOCKER_IMAGE: ${{ steps.determine-name.outputs.image-name }}
