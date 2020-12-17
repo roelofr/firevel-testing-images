@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - Dockerfile
+      - .github/workflows/build-images.yml
     branches:
       - main
 
@@ -12,6 +13,7 @@ on:
   pull_request:
     paths:
       - Dockerfile
+      - .github/workflows/build-images.yml
 
   # Or a manual built issue
   workflow_dispatch:
