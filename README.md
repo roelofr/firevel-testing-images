@@ -1,18 +1,18 @@
-# [Firevel][1] testing images
+# [Firevel][firevel] testing images
 
 This repository contains Docker images for GitHub Actions to test Google
 services on.
 
-It's made for Firevel, but should work on any repository requiring [gRPC][2]
+It's made for Firevel, but should work on any repository requiring [gRPC][grpc]
 and some PHP extensions.
 
 ## License
 
-Licensed under [MIT][3].
+Licensed under [MIT][license].
 
 ## Supported versions
 
-I'm closely sticking to the [PHP release schedule], which currently means the
+I'm closely sticking to the [PHP release schedule][php-release], which currently means the
 following PHP versions are supported:
 
 - `7.3`
@@ -26,7 +26,7 @@ Builts are scheduled to run weekly, on Saturday.
 
 ## Contents
 
-The images will contain the most recent version of gRPC available on [PECL][4],
+The images will contain the most recent version of gRPC available on [PECL][pecl-grpc],
 along with these extensions:
 
 - bcmath
@@ -63,7 +63,8 @@ jobs:
         run: vendor/bin/phpunit
 ```
 
-[1]: https://github.com/firevel
-[2]: https://grpc.io
-[3]: ./LICENSE
-[4]: https://www.php.net/supported-versions.php
+[firevel]: https://github.com/firevel
+[grpc]: https://grpc.io
+[license]: ./LICENSE
+[php-release]: https://www.php.net/supported-versions.php
+[pecl-grpc]: https://pecl.php.net/package/gRPC
